@@ -46,12 +46,14 @@ cursor:pointer;
 canvas{
 margin-top:20px;
 border:1px solid #ccc;
+background:white;
 }
 
 .result{
-font-size:18px;
+font-size:17px;
 margin-top:10px;
 line-height:1.6;
+text-align:left;
 }
 
 </style>
@@ -62,19 +64,19 @@ line-height:1.6;
 
 <div class="box">
 
-<h2>Cone Calculator</h2>
+<h2>Cone Calculator PRO+</h2>
 
 <input id="d1" placeholder="D1 เส้นผ่านศูนย์กลางบน">
 <input id="d2" placeholder="D2 เส้นผ่านศูนย์กลางล่าง">
 <input id="h" placeholder="H ความสูง">
 
-<input id="seam" placeholder="Seam allowance (เผื่อเชื่อม)">
+<input id="seam" placeholder="Seam allowance ต่อด้าน (mm)">
 
 <button onclick="calc()">คำนวณ</button>
 
 <div id="result" class="result"></div>
 
-<canvas id="pattern" width="360" height="320"></canvas>
+<canvas id="pattern" width="380" height="320"></canvas>
 
 </div>
 
@@ -94,10 +96,10 @@ alert("กรอกข้อมูลให้ครบ");
 return;
 }
 
-/* เพิ่มเผื่อเชื่อม */
+/* เพิ่มเผื่อเชื่อมซ้าย+ขวา */
 
-let d1_seam=d1+seam;
-let d2_seam=d2+seam;
+let d1_seam=d1+(seam*2);
+let d2_seam=d2+(seam*2);
 
 let r1=d1_seam/2;
 let r2=d2_seam/2;
@@ -117,14 +119,22 @@ let length2=Math.PI*d2_seam;
 document.getElementById("result").innerHTML=
 
 `
-L = ${L.toFixed(2)} <br>
-β = ${beta.toFixed(2)}° <br>
+<b>ขนาดก่อนเผื่อเชื่อม</b><br>
+D1 = ${d1}<br>
+D2 = ${d2}<br><br>
 
-R ใหญ่ = ${Rbig.toFixed(2)} <br>
-R เล็ก = ${Rsmall.toFixed(2)} <br>
+<b>ขนาดหลังเผื่อเชื่อม</b><br>
+D1 = ${d1_seam.toFixed(2)}<br>
+D2 = ${d2_seam.toFixed(2)}<br><br>
 
-ความยาวขอบบน = ${length1.toFixed(2)} <br>
-ความยาวขอบล่าง = ${length2.toFixed(2)}
+Slant Height (L) = ${L.toFixed(2)}<br>
+Angle β = ${beta.toFixed(2)}°<br><br>
+
+R ใหญ่ = ${Rbig.toFixed(2)}<br>
+R เล็ก = ${Rsmall.toFixed(2)}<br><br>
+
+ความยาวรอบบน = ${length1.toFixed(2)}<br>
+ความยาวรอบล่าง = ${length2.toFixed(2)}
 `;
 
 drawPattern();
@@ -136,12 +146,12 @@ function drawPattern(){
 let canvas=document.getElementById("pattern");
 let ctx=canvas.getContext("2d");
 
-ctx.clearRect(0,0,360,320);
+ctx.clearRect(0,0,380,320);
 
-let cx=180;
+let cx=190;
 let cy=160;
 
-let scale=0.4;
+let scale=0.35;
 
 let big=Rbig*scale;
 let small=Rsmall*scale;
@@ -151,14 +161,19 @@ let angle=beta*Math.PI/180;
 /* วาดกรวยคลี่ */
 
 ctx.beginPath();
-
 ctx.arc(cx,cy,big,0,angle);
-
 ctx.arc(cx,cy,small,angle,0,true);
-
 ctx.closePath();
 
 ctx.lineWidth=2;
+ctx.strokeStyle="black";
+ctx.stroke();
+
+/* เส้นขอบด้านข้าง */
+
+ctx.beginPath();
+ctx.moveTo(cx+small,cy);
+ctx.lineTo(cx+big,cy);
 ctx.stroke();
 
 }
