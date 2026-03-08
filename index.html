@@ -3,7 +3,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>Cone Frustum PRO+</title>
+<title>Cone Calculator</title>
 
 <style>
 
@@ -36,7 +36,7 @@ width:95%;
 padding:12px;
 margin-top:8px;
 font-size:16px;
-background:#007bff;
+background:#1a73e8;
 color:white;
 border:none;
 border-radius:6px;
@@ -50,10 +50,9 @@ background:white;
 }
 
 .result{
-font-size:17px;
+font-size:18px;
 margin-top:10px;
 line-height:1.6;
-text-align:left;
 }
 
 </style>
@@ -64,13 +63,11 @@ text-align:left;
 
 <div class="box">
 
-<h2>Cone Calculator PRO+</h2>
+<h2>Cone Calculator</h2>
 
 <input id="d1" placeholder="D1 เส้นผ่านศูนย์กลางบน">
 <input id="d2" placeholder="D2 เส้นผ่านศูนย์กลางล่าง">
 <input id="h" placeholder="H ความสูง">
-
-<input id="seam" placeholder="Seam allowance ต่อด้าน (mm)">
 
 <button onclick="calc()">คำนวณ</button>
 
@@ -82,27 +79,23 @@ text-align:left;
 
 <script>
 
-let Rbig=0,Rsmall=0,beta=0;
+let Rbig=0;
+let Rsmall=0;
+let beta=0;
 
 function calc(){
 
 let d1=parseFloat(document.getElementById("d1").value);
 let d2=parseFloat(document.getElementById("d2").value);
 let h=parseFloat(document.getElementById("h").value);
-let seam=parseFloat(document.getElementById("seam").value)||0;
 
 if(!d1||!d2||!h){
 alert("กรอกข้อมูลให้ครบ");
 return;
 }
 
-/* เพิ่มเผื่อเชื่อมซ้าย+ขวา */
-
-let d1_seam=d1+(seam*2);
-let d2_seam=d2+(seam*2);
-
-let r1=d1_seam/2;
-let r2=d2_seam/2;
+let r1=d1/2;
+let r2=d2/2;
 
 let L=Math.sqrt(h*h+(r2-r1)*(r2-r1));
 
@@ -111,29 +104,19 @@ beta=360*(r2-r1)/L;
 Rbig=(r2*L)/(r2-r1);
 Rsmall=(r1*L)/(r2-r1);
 
-/* ความยาวรอบ */
-
-let length1=Math.PI*d1_seam;
-let length2=Math.PI*d2_seam;
+let length1=Math.PI*d1;
+let length2=Math.PI*d2;
 
 document.getElementById("result").innerHTML=
 
 `
-<b>ขนาดก่อนเผื่อเชื่อม</b><br>
-D1 = ${d1}<br>
-D2 = ${d2}<br><br>
+L = ${L.toFixed(2)} <br>
+β = ${beta.toFixed(2)}° <br>
 
-<b>ขนาดหลังเผื่อเชื่อม</b><br>
-D1 = ${d1_seam.toFixed(2)}<br>
-D2 = ${d2_seam.toFixed(2)}<br><br>
+R ใหญ่ = ${Rbig.toFixed(2)} <br>
+R เล็ก = ${Rsmall.toFixed(2)} <br>
 
-Slant Height (L) = ${L.toFixed(2)}<br>
-Angle β = ${beta.toFixed(2)}°<br><br>
-
-R ใหญ่ = ${Rbig.toFixed(2)}<br>
-R เล็ก = ${Rsmall.toFixed(2)}<br><br>
-
-ความยาวรอบบน = ${length1.toFixed(2)}<br>
+ความยาวรอบบน = ${length1.toFixed(2)} <br>
 ความยาวรอบล่าง = ${length2.toFixed(2)}
 `;
 
@@ -148,21 +131,20 @@ let ctx=canvas.getContext("2d");
 
 ctx.clearRect(0,0,380,320);
 
-let cx=190;
-let cy=160;
+let maxR=Math.max(Rbig,Rsmall);
 
-/* Auto scale ให้พอดอจอ */
+let scale=150/maxR;
 
-let maxR = Math.max(Rbig,Rsmall);
+let big=Rbig*scale;
+let small=Rsmall*scale;
 
-let scale = 140/maxR;
+let angle=beta*Math.PI/180;
 
-let big = Rbig * scale;
-let small = Rsmall * scale;
-
-let angle = beta*Math.PI/180;
+let cx=40;
+let cy=280;
 
 ctx.beginPath();
+
 ctx.arc(cx,cy,big,0,angle);
 
 ctx.arc(cx,cy,small,angle,0,true);
@@ -173,15 +155,18 @@ ctx.lineWidth=2;
 ctx.strokeStyle="black";
 ctx.stroke();
 
-/* เส้นด้านข้าง */
-
 ctx.beginPath();
-ctx.moveTo(cx+small,cy);
-ctx.lineTo(cx+big,cy);
+
+ctx.moveTo(cx,cy);
+
+ctx.lineTo(
+cx+Math.cos(angle)*big,
+cy-Math.sin(angle)*big
+);
+
 ctx.stroke();
 
 }
-
 
 </script>
 
