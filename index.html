@@ -1,10 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="th">
 <head>
 <meta charset="UTF-8">
 <title>Cone Frustum PRO+</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 
@@ -24,7 +23,7 @@ border-radius:10px;
 box-shadow:0 0 10px rgba(0,0,0,0.2);
 }
 
-input,select{
+input{
 width:90%;
 padding:10px;
 margin:6px;
@@ -46,56 +45,48 @@ cursor:pointer;
 
 canvas{
 margin-top:20px;
+border:1px solid #ccc;
 }
 
 .result{
 font-size:18px;
 margin-top:10px;
+line-height:1.6;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div class="box">
 
-<h2>Cone Calculator PRO+</h2>
-
-<select id="unit">
-<option value="mm">mm</option>
-<option value="cm">cm</option>
-</select>
+<h2>Cone Calculator</h2>
 
 <input id="d1" placeholder="D1 เส้นผ่านศูนย์กลางบน">
 <input id="d2" placeholder="D2 เส้นผ่านศูนย์กลางล่าง">
 <input id="h" placeholder="H ความสูง">
 
-<input id="thickness" placeholder="Thickness ความหนาแผ่น">
-<input id="seam" placeholder="Seam allowance เผื่อเชื่อม">
+<input id="seam" placeholder="Seam allowance (เผื่อเชื่อม)">
 
 <button onclick="calc()">คำนวณ</button>
 
-<button onclick="exportDXF()">Download DXF</button>
-
-<button onclick="exportPDF()">Download PDF</button>
-
 <div id="result" class="result"></div>
 
-<canvas id="pattern" width="350" height="300"></canvas>
+<canvas id="pattern" width="360" height="320"></canvas>
 
 </div>
 
 <script>
 
-let Rbig,Rsmall,beta;
+let Rbig=0,Rsmall=0,beta=0;
 
 function calc(){
 
 let d1=parseFloat(document.getElementById("d1").value);
 let d2=parseFloat(document.getElementById("d2").value);
 let h=parseFloat(document.getElementById("h").value);
-
 let seam=parseFloat(document.getElementById("seam").value)||0;
 
 if(!d1||!d2||!h){
@@ -103,26 +94,37 @@ alert("กรอกข้อมูลให้ครบ");
 return;
 }
 
-d1+=seam
-d2+=seam
+/* เพิ่มเผื่อเชื่อม */
 
-let r1=d1/2;
-let r2=d2/2;
+let d1_seam=d1+seam;
+let d2_seam=d2+seam;
+
+let r1=d1_seam/2;
+let r2=d2_seam/2;
 
 let L=Math.sqrt(h*h+(r2-r1)*(r2-r1));
 
-beta=360*(r2/L);
+beta=360*(r2-r1)/L;
 
 Rbig=(r2*L)/(r2-r1);
 Rsmall=(r1*L)/(r2-r1);
+
+/* ความยาวรอบ */
+
+let length1=Math.PI*d1_seam;
+let length2=Math.PI*d2_seam;
 
 document.getElementById("result").innerHTML=
 
 `
 L = ${L.toFixed(2)} <br>
 β = ${beta.toFixed(2)}° <br>
+
 R ใหญ่ = ${Rbig.toFixed(2)} <br>
-R เล็ก = ${Rsmall.toFixed(2)}
+R เล็ก = ${Rsmall.toFixed(2)} <br>
+
+ความยาวขอบบน = ${length1.toFixed(2)} <br>
+ความยาวขอบล่าง = ${length2.toFixed(2)}
 `;
 
 drawPattern();
@@ -134,10 +136,10 @@ function drawPattern(){
 let canvas=document.getElementById("pattern");
 let ctx=canvas.getContext("2d");
 
-ctx.clearRect(0,0,350,300);
+ctx.clearRect(0,0,360,320);
 
-let cx=175;
-let cy=150;
+let cx=180;
+let cy=160;
 
 let scale=0.4;
 
@@ -146,79 +148,18 @@ let small=Rsmall*scale;
 
 let angle=beta*Math.PI/180;
 
+/* วาดกรวยคลี่ */
+
 ctx.beginPath();
+
 ctx.arc(cx,cy,big,0,angle);
+
 ctx.arc(cx,cy,small,angle,0,true);
+
 ctx.closePath();
+
+ctx.lineWidth=2;
 ctx.stroke();
-
-}
-
-function exportDXF(){
-
-if(!Rbig) return alert("คำนวณก่อน");
-
-let dxf=
-
-`0
-SECTION
-2
-ENTITIES
-0
-ARC
-8
-0
-10
-0
-20
-0
-40
-${Rbig}
-50
-0
-51
-${beta}
-0
-ARC
-8
-0
-10
-0
-20
-0
-40
-${Rsmall}
-50
-0
-51
-${beta}
-0
-ENDSEC
-0
-EOF`
-
-let blob=new Blob([dxf],{type:"application/dxf"})
-
-let a=document.createElement("a")
-a.href=URL.createObjectURL(blob)
-a.download="cone_pattern.dxf"
-a.click()
-
-}
-
-function exportPDF(){
-
-const { jsPDF } = window.jspdf;
-
-let doc=new jsPDF();
-
-doc.text("Cone Frustum Calculation",20,20);
-
-doc.text("R ใหญ่: "+Rbig.toFixed(2),20,40);
-doc.text("R เล็ก: "+Rsmall.toFixed(2),20,50);
-doc.text("Angle β: "+beta.toFixed(2),20,60);
-
-doc.save("cone_pattern.pdf")
 
 }
 
