@@ -151,25 +151,29 @@ ctx.clearRect(0,0,380,320);
 let cx=190;
 let cy=160;
 
-let scale=0.35;
+/* Auto scale ให้พอดอจอ */
 
-let big=Rbig*scale;
-let small=Rsmall*scale;
+let maxR = Math.max(Rbig,Rsmall);
 
-let angle=beta*Math.PI/180;
+let scale = 140/maxR;
 
-/* วาดกรวยคลี่ */
+let big = Rbig * scale;
+let small = Rsmall * scale;
+
+let angle = beta*Math.PI/180;
 
 ctx.beginPath();
 ctx.arc(cx,cy,big,0,angle);
+
 ctx.arc(cx,cy,small,angle,0,true);
+
 ctx.closePath();
 
 ctx.lineWidth=2;
 ctx.strokeStyle="black";
 ctx.stroke();
 
-/* เส้นขอบด้านข้าง */
+/* เส้นด้านข้าง */
 
 ctx.beginPath();
 ctx.moveTo(cx+small,cy);
@@ -177,6 +181,7 @@ ctx.lineTo(cx+big,cy);
 ctx.stroke();
 
 }
+
 
 </script>
 
