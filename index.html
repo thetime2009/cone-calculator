@@ -119,14 +119,28 @@
         const content = document.getElementById("instruction-content");
         container.style.display = "block";
         
+        
+
+              // เขียน HTML เข้าไปใน Script
         content.innerHTML = `
-            <h3 style="text-align:center;">ขั้นตอนการตีเส้น</h3>
-            <ol>
-                <li>ลากเส้นศูนย์กลางแนวดิ่ง</li>
-                <li>กำหนดจุดหมุน (Center) แล้วกางวงเวียนรัศมี <b>${Rbig.toFixed(2)}</b> วาดเส้นโค้งนอก</li>
-                <li>ใช้จุดหมุนเดิม กางวงเวียนรัศมี <b>${Rsmall.toFixed(2)}</b> วาดเส้นโค้งใน</li>
-                <li><b>วิธีเช็คมุม:</b> วัดระยะเส้นตรงจากจุดเริ่มต้นเส้นโค้งนอก ให้ได้ระยะ <b>${CD.toFixed(2)}</b> เพื่อหาจุดสิ้นสุด</li>
-                <li>ลากเส้นปิดหัวท้ายเข้าหาจุดหมุน</li>
+            <h2 style="text-align:center;">ขั้นตอนการสร้างกรวย</h2>
+            <ol style="font-weight: bold;">
+                <li>สร้างเส้นตรงแนวตั้ง ให้มีความยาวมากกว่าความยาวของชิ้นงาน ${L.toFixed(2)} </li>
+                <li>ทำตำแหน่งจุดหมุนของวงเวียน ไว้ด้านล่างสุดของเส้นตรง</li>
+                <li>ตั้งวงเวียน ตามระยะ <b>${Rsmall.toFixed(2)}</b> (R เล็ก) แล้วทำเส้นโค้ง
+                    <ul style="list-style-type: none; font-weight: normal;">
+                        <li>3.1 วาดเส้นโค้ง โดยเริ่มจากเส้นตรงแนวตั้งไปทางด้านขวามือ</li>
+                    </ul>
+                </li>
+                <li>ตั้งวงเวียน ตามระยะ <b>${Rbig.toFixed(2)}</b> (R ใหญ่) แล้วทำเส้นโค้ง
+                    <ul style="list-style-type: none; font-weight: normal;">
+                        <li>4.1 วาดเส้นโค้ง โดยเริ่มจากเส้นตรงแนวตั้งไปทางด้านขวามือ</li>
+                    </ul>
+                </li>
+                <li>R หรือ เส้นโค้งทั้ง 2 ต้องมีจุดหมุนเดียวกัน คือ ด้านล่างสุดเส้นตรง</li>
+                <li>วาดเส้นตรง จากระยะที่ได้จากค่า A → B (คือ <b>${AB.toFixed(2)}</b>) เพื่อหาจุดสิ้นสุดของเส้นโค้งขอบล่าง</li>
+                <li>วาดเส้นตรง จากระยะที่ได้จากค่า C → D (คือ <b>${CD.toFixed(2)}</b>) เพื่อหาจุดสิ้นสุดของเส้นโค้งขอบบน</li>
+
             </ol>
             <p style="font-size:10px; color:gray; text-align:center;">Updated: 10/03/2026 | Pinthong Trading</p>
         `;
@@ -135,3 +149,4 @@
 
 </body>
 </html>
+
