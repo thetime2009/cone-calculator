@@ -107,6 +107,13 @@ Rsmall=(r1*L)/(r2-r1);
 let length1=Math.PI*d1;
 let length2=Math.PI*d2;
 
+/* ระยะเส้นตรง */
+
+let theta=beta*Math.PI/180;
+
+let AB=2*Rsmall*Math.sin(theta/2);
+let CD=2*Rbig*Math.sin(theta/2);
+
 document.getElementById("result").innerHTML=
 
 `
@@ -119,8 +126,8 @@ R เล็ก = ${Rsmall.toFixed(2)} <br>
 ความยาวรอบบน = ${length1.toFixed(2)} <br>
 ความยาวรอบล่าง = ${length2.toFixed(2)} <br><br>
 
-<b>ระยะ A → B = ${Rsmall.toFixed(2)}</b> <br>
-<b>ระยะ C → D = ${Rbig.toFixed(2)}</b>
+<b>ระยะเส้นตรง A → B = ${AB.toFixed(2)}</b><br>
+<b>ระยะเส้นตรง C → D = ${CD.toFixed(2)}</b>
 `;
 
 drawPattern();
@@ -157,6 +164,8 @@ ctx.closePath();
 ctx.lineWidth=2;
 ctx.strokeStyle="black";
 ctx.stroke();
+
+/* เส้นด้านขวา */
 
 ctx.beginPath();
 
