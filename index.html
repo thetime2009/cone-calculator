@@ -163,8 +163,8 @@
                     </ul>
                 </li>
                 <li>R หรือ เส้นโค้งทั้ง 2 ต้องมีจุดหมุนเดียวกัน คือ ด้านล่างสุดเส้นตรง</li>
-                <li>วาดเส้นตรง จากระยะที่ได้จากค่า A → B (คือ ${AB.toFixed(2)}) เพื่อหาจุดสิ้นสุดของเส้นโค้งขอบล่าง</li>
-                <li>วาดเส้นตรง จากระยะที่ได้จากค่า C → D (คือ ${CD.toFixed(2)}) เพื่อหาจุดสิ้นสุดของเส้นโค้งขอบบน</li>
+                <li>วาดเส้นตรง จากระยะที่ได้จากค่า A → B (คือ <span style="color:blue;">${AB.toFixed(2)}) เพื่อหาจุดสิ้นสุดของเส้นโค้งขอบล่าง</li>
+                <li>วาดเส้นตรง จากระยะที่ได้จากค่า C → D (คือ <span style="color:blue;">${CD.toFixed(2)}) เพื่อหาจุดสิ้นสุดของเส้นโค้งขอบบน</li>
                 <li style="font-weight: normal; margin-top: 15px; color: gray; font-size: 12px; text-align:center;"> 
                     Date 10/3/2569 V.1.0 By: Thetime 
                 </li>
@@ -172,35 +172,61 @@
         `;
     }
 
-    function drawPattern() {
-        let canvas = document.getElementById("pattern");
-        let ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawPattern();
 
-        let maxR = Math.max(Rbig, Rsmall);
-        let scale = (canvas.height * 0.45) / maxR;
+}
 
-        let big = Rbig * scale;
-        let small = Rsmall * scale;
-        let angle = beta * Math.PI / 180;
+function drawPattern(){
 
-        let cx = canvas.width / 2;
-        let cy = canvas.height / 2 + 60;
+let canvas=document.getElementById("pattern");
+let ctx=canvas.getContext("2d");
 
-        ctx.beginPath();
-        ctx.arc(cx, cy, big, 0, angle);
-        ctx.arc(cx, cy, small, angle, 0, true);
-        ctx.closePath();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "black";
-        ctx.stroke();
+ctx.clearRect(0,0,canvas.width,canvas.height);
 
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + Math.cos(angle) * big, cy - Math.sin(angle) * big); // แก้ไขการวาดเส้นให้สัมพันธ์กับทิศทาง arc
-        // หมายเหตุ: การวาดใน Canvas บางครั้งต้องปรับแกน Y ให้สอดคล้องกับพิกัดหน้าจอ
-    }
+let maxR=Math.max(Rbig,Rsmall);
+
+let scale=(canvas.height*0.45)/maxR;
+
+let big=Rbig*scale;
+let small=Rsmall*scale;
+
+let angle=beta*Math.PI/180;
+
+/* จุดศูนย์กลาง */
+
+let cx=canvas.width/2;
+let cy=canvas.height/2+60;
+
+/* วาด pattern */
+
+ctx.beginPath();
+
+ctx.arc(cx,cy,big,0,angle);
+
+ctx.arc(cx,cy,small,angle,0,true);
+
+ctx.closePath();
+
+ctx.lineWidth=2;
+ctx.strokeStyle="black";
+ctx.stroke();
+
+/* เส้นด้านขวา */
+
+ctx.beginPath();
+
+ctx.moveTo(cx,cy);
+
+ctx.lineTo(
+cx+Math.cos(angle)*big,
+cy-Math.sin(angle)*big
+);
+
+ctx.stroke();
+
+}
 </script>
 
 </body>
 </html>
+
