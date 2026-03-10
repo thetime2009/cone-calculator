@@ -65,8 +65,8 @@ line-height:1.6;
 
 <h2>Cone Calculator</h2>
 
-<input id="d1" placeholder="D1 เส้นผ่านศูนย์กลางบน">
-<input id="d2" placeholder="D2 เส้นผ่านศูนย์กลางล่าง">
+<input id="d1" placeholder="D1 เส้นผ่านศูนย์กลางเล็ก">
+<input id="d2" placeholder="D2 เส้นผ่านศูนย์กลางใหญ่">
 <input id="h" placeholder="H ความสูง">
 
 <button onclick="calc()">คำนวณ</button>
@@ -126,8 +126,8 @@ R เล็ก = ${Rsmall.toFixed(2)} <br>
 ความยาวรอบบน = ${length1.toFixed(2)} <br>
 ความยาวรอบล่าง = ${length2.toFixed(2)} <br><br>
 
-<b>ระยะเส้นตรง A → B = ${AB.toFixed(2)}</b><br>
-<b>ระยะเส้นตรง C → D = ${CD.toFixed(2)}</b>
+<b>ระยะเส้นตรงวงเล็ก A → B = ${AB.toFixed(2)} ครึ่ง=${AB.toFixed(2)/2} </b> <br>
+<b>ระยะเส้นตรงวงใหญ่ C → D = ${CD.toFixed(2)}</b>
 `;
 
 drawPattern();
@@ -188,4 +188,5 @@ ctx.stroke();
 
 </body>
 </html>
+
 
