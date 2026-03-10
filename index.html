@@ -3,232 +3,135 @@
 <head>
 <meta charset="UTF-8">
 <title>Cone Calculator - ปิ่นทองเทรดดิ้ง</title>
-
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f2f2f2;
-        text-align: center;
-        padding-bottom: 50px;
-    }
-
-    .box {
-        background: white;
-        width: 420px;
-        margin: auto;
-        padding: 20px;
-        margin-top: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-
-    /* กล่องขั้นตอนการสร้าง ให้ชิดซ้ายเสมอ */
-    .instruction-box {
-        text-align: left;
-        margin-top: 20px;
-    }
-
-    input {
-        width: 90%;
-        padding: 10px;
-        margin: 6px;
-        font-size: 16px;
-        text-align: center;
-    }
-
-    button {
-        width: 95%;
-        padding: 12px;
-        margin-top: 8px;
-        font-size: 16px;
-        background: #1a73e8;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background: #1557b0;
-    }
-
-    canvas {
-        margin-top: 20px;
-        border: 1px solid #ccc;
-        background: white;
-    }
-
-    .result {
-        font-size: 18px;
-        margin-top: 10px;
-        line-height: 1.6;
-    }
-
-    ol li {
-        margin-bottom: 10px;
-    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; text-align: center; padding: 20px; }
+    .box { background: white; width: 450px; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .instruction-box { text-align: left; margin-top: 20px; line-height: 1.6; }
+    input { width: 90%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+    button { width: 90%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 6px; font-size: 18px; cursor: pointer; transition: 0.3s; }
+    button:hover { background: #1557b0; }
+    canvas { margin-top: 20px; border: 1px solid #eee; border-radius: 8px; background: #fff; max-width: 100%; }
+    .result { font-size: 16px; margin-top: 15px; text-align: left; background: #e8f0fe; padding: 15px; border-radius: 8px; }
+    b { color: #1a73e8; }
 </style>
 </head>
-
 <body>
 
 <div class="box">
-    <h2>คำนวณกรวย ปิ่นทองเทรดดิ้ง</h2>
+    <h2 style="color: #333;">คำนวณแผ่นคลี่กรวย</h2>
+    <p style="font-size: 0.9em; color: #666;">ปิ่นทองเทรดดิ้ง (หน่วย: มม.)</p>
 
-    <input id="d1" placeholder="D1 เส้นผ่านศูนย์กลางเล็ก" type="number">
-    <input id="d2" placeholder="D2 เส้นผ่านศูนย์กลางใหญ่" type="number">
-    <input id="h" placeholder="H ความสูง" type="number">
+    <input id="d1" placeholder="D1 เส้นผ่านศูนย์กลางเล็ก (บน)" type="number">
+    <input id="d2" placeholder="D2 เส้นผ่านศูนย์กลางใหญ่ (ล่าง)" type="number">
+    <input id="h" placeholder="H ความสูงแนวตั้ง" type="number">
 
-    <button onclick="calc()">คำนวณ</button>
+    <button onclick="calc()">คำนวณและวาดแบบ</button>
 
-    <div id="result" class="result"></div>
-
-    <canvas id="pattern" width="380" height="320"></canvas>
+    <div id="result" class="result" style="display:none;"></div>
+    <canvas id="pattern" width="400" height="350"></canvas>
 </div>
 
-<!-- กล่องสำหรับแสดงขั้นตอนการสร้าง (ตอนแรกจะว่างไว้) -->
 <div id="instruction-container" class="box" style="display: none;">
     <div id="instruction-content" class="instruction-box"></div>
 </div>
 
 <script>
-    let Rbig = 0;
-    let Rsmall = 0;
-    let beta = 0;
+    let Rbig = 0, Rsmall = 0, beta = 0, L = 0;
 
     function calc() {
         let d1 = parseFloat(document.getElementById("d1").value);
         let d2 = parseFloat(document.getElementById("d2").value);
         let h = parseFloat(document.getElementById("h").value);
 
-        if (!d1 || !d2 || !h) {
-            alert("กรอกข้อมูลให้ครบ");
+        if (!d1 || !d2 || !h || d1 >= d2) {
+            alert("กรุณากรอกข้อมูลให้ถูกต้อง (D2 ต้องใหญ่กว่า D1)");
             return;
         }
 
         let r1 = d1 / 2;
         let r2 = d2 / 2;
 
-        let L = Math.sqrt(h * h + (r2 - r1) * (r2 - r1));
-        beta = 360 * (r2 - r1) / L;
-
+        // คำนวณความสูงเอียง (L)
+        L = Math.sqrt(Math.pow(h, 2) + Math.pow(r2 - r1, 2));
+        
+        // คำนวณรัศมีแผ่นคลี่
         Rbig = (r2 * L) / (r2 - r1);
         Rsmall = (r1 * L) / (r2 - r1);
+        
+        // มุมของแผ่นคลี่
+        beta = (360 * r2) / Rbig; 
 
-        let length1 = Math.PI * d1;
-        let length2 = Math.PI * d2;
+        // ระยะเส้นตรง (Chord length)
+        let rad = (beta * Math.PI) / 180;
+        let AB = 2 * Rsmall * Math.sin(rad / 2);
+        let CD = 2 * Rbig * Math.sin(rad / 2);
 
-        let theta = beta * Math.PI / 180;
-        let AB = 2 * Rsmall * Math.sin(theta / 2);
-        let CD = 2 * Rbig * Math.sin(theta / 2);
-
-        // แสดงผลลัพธ์ตัวเลข
+        document.getElementById("result").style.display = "block";
         document.getElementById("result").innerHTML = `
-            L = ${L.toFixed(2)} <br>
-            β มุม = ${beta.toFixed(2)}° <br>
-            R ใหญ่ = ${Rbig.toFixed(2)} <br>
-            R เล็ก = ${Rsmall.toFixed(2)} <br>
-            ความยาวเส้นวงเล็ก = ${length1.toFixed(2)} <br>
-            ความยาวเส้นวงใหญ่ = ${length2.toFixed(2)} <br><br>
-            <b>ระยะเส้นตรง A → B = ${AB.toFixed(2)} </b><br>
-            <b>แบ่งครึ่งเส้น A → B = ${(AB / 2).toFixed(2)} </b><br>
-            <b>ระยะเส้นตรง C → D = ${CD.toFixed(2)}</b><br>
-            <b>แบ่งครึ่งเส้น C → D = ${(CD / 2).toFixed(2)} </b>
+            <b>ผลการคำนวณ:</b><br>
+            ความสูงเอียง (L): ${L.toFixed(2)}<br>
+            มุมแผ่นคลี่ (β): ${beta.toFixed(2)}°<br>
+            รัศมีวงนอก (R ใหญ่): ${Rbig.toFixed(2)}<br>
+            รัศมีวงใน (R เล็ก): ${Rsmall.toFixed(2)}<br><br>
+            <b>ระยะเช็คงาน (เส้นตรง):</b><br>
+            A → B (ด้านใน): ${AB.toFixed(2)}<br>
+            C → D (ด้านนอก): ${CD.toFixed(2)}
         `;
 
         drawPattern();
         generateInstructions(AB, CD);
     }
 
+    function drawPattern() {
+        const canvas = document.getElementById("pattern");
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let padding = 40;
+        let scale = (canvas.width - padding * 2) / (Rbig * 2);
+        if (Rbig * scale > canvas.height - padding) {
+            scale = (canvas.height - padding * 2) / Rbig;
+        }
+
+        let sRbig = Rbig * scale;
+        let sRsmall = Rsmall * scale;
+        let cx = canvas.width / 2;
+        let cy = padding; // จุดหมุนอยู่ด้านบน
+
+        let startAngle = (Math.PI - (beta * Math.PI / 180)) / 2;
+        let endAngle = startAngle + (beta * Math.PI / 180);
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, sRbig, startAngle, endAngle); // เส้นนอก
+        ctx.lineTo(cx + Math.cos(endAngle) * sRsmall, cy + Math.sin(endAngle) * sRsmall);
+        ctx.arc(cx, cy, sRsmall, endAngle, startAngle, true); // เส้นใน
+        ctx.closePath();
+
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#1a73e8";
+        ctx.stroke();
+        ctx.fillStyle = "#f0f7ff";
+        ctx.fill();
+    }
+
     function generateInstructions(AB, CD) {
         const container = document.getElementById("instruction-container");
         const content = document.getElementById("instruction-content");
-
-        container.style.display = "block"; // แสดงกล่องขั้นตอน
+        container.style.display = "block";
         
-        // เขียน HTML เข้าไปใน Script
         content.innerHTML = `
-            <h2 style="text-align:center;">ขั้นตอนการสร้างกรวย</h2>
-            <ol style="font-weight: bold;">
-                <li>สร้างเส้นตรงแนวตั้ง ให้มีความยาวมากกว่าความยาวของชิ้นงาน<span style="color:blue;">${L.toFixed(2)}</span></li>
-                <li>ทำตำแหน่งจุดหมุนของวงเวียน ไว้ด้านล่างสุดของเส้นตรง</li>
-                <li>ตั้งวงเวียน ตามระยะ <span style="color:blue;">${Rsmall.toFixed(2)}</span> (R เล็ก) แล้วทำเส้นโค้ง
-                    <ul style="list-style-type: none; font-weight: normal;">
-                        <li>3.1 วาดเส้นโค้ง โดยเริ่มจากเส้นตรงแนวตั้งไปทางด้านขวามือ</li>
-                    </ul>
-                </li>
-                <li>ตั้งวงเวียน ตามระยะ <span style="color:blue;">${Rbig.toFixed(2)}</span> (R ใหญ่) แล้วทำเส้นโค้ง
-                    <ul style="list-style-type: none; font-weight: normal;">
-                        <li>4.1 วาดเส้นโค้ง โดยเริ่มจากเส้นตรงแนวตั้งไปทางด้านขวามือ</li>
-                    </ul>
-                </li>
-                <li>R หรือ เส้นโค้งทั้ง 2 ต้องมีจุดหมุนเดียวกัน คือ ด้านล่างสุดเส้นตรง</li>
-                <li>วาดเส้นตรง จากระยะที่ได้จากค่า A → B (คือ <span style="color:blue;">${AB.toFixed(2)}</span>) เพื่อหาจุดสิ้นสุดของเส้นโค้งขอบล่าง</li>
-                <li>วาดเส้นตรง จากระยะที่ได้จากค่า C → D (คือ <span style="color:blue;">${CD.toFixed(2)}</span>) เพื่อหาจุดสิ้นสุดของเส้นโค้งขอบบน</li>
-                <li style="font-weight: normal; margin-top: 15px; color: gray; font-size: 12px; text-align:center;"> 
-                    Date 10/3/2569 V.1.0 By: Thetime 
-                </li>
+            <h3 style="text-align:center;">ขั้นตอนการตีเส้น</h3>
+            <ol>
+                <li>ลากเส้นศูนย์กลางแนวดิ่ง</li>
+                <li>กำหนดจุดหมุน (Center) แล้วกางวงเวียนรัศมี <b>${Rbig.toFixed(2)}</b> วาดเส้นโค้งนอก</li>
+                <li>ใช้จุดหมุนเดิม กางวงเวียนรัศมี <b>${Rsmall.toFixed(2)}</b> วาดเส้นโค้งใน</li>
+                <li><b>วิธีเช็คมุม:</b> วัดระยะเส้นตรงจากจุดเริ่มต้นเส้นโค้งนอก ให้ได้ระยะ <b>${CD.toFixed(2)}</b> เพื่อหาจุดสิ้นสุด</li>
+                <li>ลากเส้นปิดหัวท้ายเข้าหาจุดหมุน</li>
             </ol>
+            <p style="font-size:10px; color:gray; text-align:center;">Updated: 10/03/2026 | Pinthong Trading</p>
         `;
     }
-
-    drawPattern();
-
-
-
-function drawPattern(){
-
-let canvas=document.getElementById("pattern");
-let ctx=canvas.getContext("2d");
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-let maxR=Math.max(Rbig,Rsmall);
-
-let scale=(canvas.height*0.45)/maxR;
-
-let big=Rbig*scale;
-let small=Rsmall*scale;
-
-let angle=beta*Math.PI/180;
-
-/* จุดศูนย์กลาง */
-
-let cx=canvas.width/2;
-let cy=canvas.height/2+60;
-
-/* วาด pattern */
-
-ctx.beginPath();
-
-ctx.arc(cx,cy,big,0,angle);
-
-ctx.arc(cx,cy,small,angle,0,true);
-
-ctx.closePath();
-
-ctx.lineWidth=2;
-ctx.strokeStyle="black";
-ctx.stroke();
-
-/* เส้นด้านขวา */
-
-ctx.beginPath();
-
-ctx.moveTo(cx,cy);
-
-ctx.lineTo(
-cx+Math.cos(angle)*big,
-cy-Math.sin(angle)*big
-);
-
-ctx.stroke();
-
-}
 </script>
 
 </body>
 </html>
-
-
-
