@@ -150,7 +150,7 @@
         content.innerHTML = `
             <h2 style="text-align:center;">ขั้นตอนการสร้างกรวย</h2>
             <ol style="font-weight: bold;">
-                <li>สร้างเส้นตรงแนวตั้ง ให้มีความยาวมากกว่าความยาวของชิ้นงาน</li>
+                <li>สร้างเส้นตรงแนวตั้ง ให้มีความยาวมากกว่าความยาวของชิ้นงาน<span style="color:blue;">${L.toFixed(2)}</span></li>
                 <li>ทำตำแหน่งจุดหมุนของวงเวียน ไว้ด้านล่างสุดของเส้นตรง</li>
                 <li>ตั้งวงเวียน ตามระยะ <span style="color:blue;">${Rsmall.toFixed(2)}</span> (R เล็ก) แล้วทำเส้นโค้ง
                     <ul style="list-style-type: none; font-weight: normal;">
@@ -163,8 +163,8 @@
                     </ul>
                 </li>
                 <li>R หรือ เส้นโค้งทั้ง 2 ต้องมีจุดหมุนเดียวกัน คือ ด้านล่างสุดเส้นตรง</li>
-                <li>วาดเส้นตรง จากระยะที่ได้จากค่า A → B (คือ <span style="color:blue;">${AB.toFixed(2)}) เพื่อหาจุดสิ้นสุดของเส้นโค้งขอบล่าง</li>
-                <li>วาดเส้นตรง จากระยะที่ได้จากค่า C → D (คือ <span style="color:blue;">${CD.toFixed(2)}) เพื่อหาจุดสิ้นสุดของเส้นโค้งขอบบน</li>
+                <li>วาดเส้นตรง จากระยะที่ได้จากค่า A → B (คือ <span style="color:blue;">${AB.toFixed(2)}</span>) เพื่อหาจุดสิ้นสุดของเส้นโค้งขอบล่าง</li>
+                <li>วาดเส้นตรง จากระยะที่ได้จากค่า C → D (คือ <span style="color:blue;">${CD.toFixed(2)}</span>) เพื่อหาจุดสิ้นสุดของเส้นโค้งขอบบน</li>
                 <li style="font-weight: normal; margin-top: 15px; color: gray; font-size: 12px; text-align:center;"> 
                     Date 10/3/2569 V.1.0 By: Thetime 
                 </li>
@@ -229,4 +229,5 @@ ctx.stroke();
 
 </body>
 </html>
+
 
