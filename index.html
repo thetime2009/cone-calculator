@@ -87,24 +87,25 @@
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        let padding = 40;
+        let padding = 60; // เพิ่ม Padding เพื่อให้มีที่ว่างสำหรับตัวอักษร
         let scale = (canvas.width - padding * 2) / (Rbig * 2);
-        if (Rbig * scale > canvas.height - padding) {
+        if (Rbig * scale > canvas.height - padding * 2) {
             scale = (canvas.height - padding * 2) / Rbig;
         }
 
         let sRbig = Rbig * scale;
         let sRsmall = Rsmall * scale;
         let cx = canvas.width / 2;
-        let cy = padding; // จุดหมุนอยู่ด้านบน
+        let cy = padding; 
 
         let startAngle = (Math.PI - (beta * Math.PI / 180)) / 2;
         let endAngle = startAngle + (beta * Math.PI / 180);
 
+        // วาดรูปแผ่นคลี่
         ctx.beginPath();
-        ctx.arc(cx, cy, sRbig, startAngle, endAngle); // เส้นนอก
+        ctx.arc(cx, cy, sRbig, startAngle, endAngle);
         ctx.lineTo(cx + Math.cos(endAngle) * sRsmall, cy + Math.sin(endAngle) * sRsmall);
-        ctx.arc(cx, cy, sRsmall, endAngle, startAngle, true); // เส้นใน
+        ctx.arc(cx, cy, sRsmall, endAngle, startAngle, true);
         ctx.closePath();
 
         ctx.lineWidth = 2;
@@ -112,6 +113,29 @@
         ctx.stroke();
         ctx.fillStyle = "#f0f7ff";
         ctx.fill();
+
+        // --- ส่วนที่เพิ่มใหม่: วาดตัวอักษร A, B, C, D ---
+        ctx.font = "bold 18px Arial";
+        ctx.fillStyle = "black";
+        
+        // พิกัดจุดต่างๆ (บวกค่า Offset เล็กน้อยเพื่อให้ตัวหนังสือไม่ทับเส้น)
+        let offset = 15;
+
+        // จุด A (บนซ้าย)
+        ctx.textAlign = "right";
+        ctx.fillText("A", (cx + Math.cos(startAngle) * sRsmall) - 5, (cy + Math.sin(startAngle) * sRsmall) - 5);
+
+        // จุด B (บนขวา)
+        ctx.textAlign = "left";
+        ctx.fillText("B", (cx + Math.cos(endAngle) * sRsmall) + 5, (cy + Math.sin(endAngle) * sRsmall) - 5);
+
+        // จุด C (ล่างซ้าย)
+        ctx.textAlign = "right";
+        ctx.fillText("C", (cx + Math.cos(startAngle) * sRbig) - 5, (cy + Math.sin(startAngle) * sRbig) + 20);
+
+        // จุด D (ล่างขวา)
+        ctx.textAlign = "left";
+        ctx.fillText("D", (cx + Math.cos(endAngle) * sRbig) + 5, (cy + Math.sin(endAngle) * sRbig) + 20);
     }
 
     function generateInstructions(AB, CD) {
@@ -149,5 +173,6 @@
 
 </body>
 </html>
+
 
 
